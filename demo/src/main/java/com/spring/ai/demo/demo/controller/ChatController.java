@@ -3,7 +3,6 @@ package com.spring.ai.demo.demo.controller;
 import com.spring.ai.demo.demo.Entity.Tut;
 import com.spring.ai.demo.demo.service.ChatServiceImpl;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
