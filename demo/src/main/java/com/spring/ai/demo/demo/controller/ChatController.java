@@ -42,8 +42,13 @@ public class ChatController {
 //        this.ollamaChatClient= ollamaChatClient;
 //    }
 
+//    @GetMapping("/chat")
+//    public ResponseEntity<List<Tut>> chat(@RequestParam(value = "q") String query){
+//        return ResponseEntity.ok(chatService.message(query));
+//    }
+
     @GetMapping("/chat")
-    public ResponseEntity<List<Tut>> chat(@RequestParam(value = "q") String query){
-        return ResponseEntity.ok(chatService.message(query));
+    public ResponseEntity<String> chat(@RequestParam(value = "q") String query){
+        return ResponseEntity.ok(chatService.chatTemplate(query));
     }
 }
