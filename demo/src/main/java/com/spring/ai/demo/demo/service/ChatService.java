@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ChatService {
 
-    List<Tut> message(String query);
+//    List<Tut> message(String query);
 
-    public String chatTemplate();
+         public String chatTemplate(String query);
 }
