@@ -1,6 +1,7 @@
 package com.spring.ai.demo.demo.service;
 
 import com.spring.ai.demo.demo.Entity.Tut;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -8,5 +9,7 @@ public interface ChatService {
 
 //    List<Tut> message(String query);
 
-         public String chatTemplate(String query);
+    String chatTemplate(String query);
+
+    Flux<String> streamChat(String query);
 }
