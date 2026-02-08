@@ -2,6 +2,7 @@ package com.spring.ai.demo.demo.service;
 
 import com.spring.ai.demo.demo.Entity.Tut;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
@@ -63,7 +64,7 @@ public class ChatServiceImpl implements ChatService {
 //    }
 //
     @Override
-    public String chatTemplate(String query) {
+    public String chatTemplate(String query, String userId) {
 //
 ////        //first step
 ////        PromptTemplate strTemplate = PromptTemplate.builder().template("What is {techName}? tell ma also about {techExample}").build();
@@ -98,6 +99,7 @@ public class ChatServiceImpl implements ChatService {
 //
         return this.chatClient
                 .prompt()
+                .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID,"userId"))
                 .system(system ->
                         system.text(systemMessage.toString())
                 )
@@ -118,8 +120,10 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public Flux<String> streamChat(String query) {
         return chatClient.
-                prompt().
-                system(system->
+                prompt()
+                .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID,"userId"))
+
+                .system(system->
                                 system.text(this.systemMessage))
                 .user(user->user.text(this.userMessage).param("concept",query))
                 .stream()
