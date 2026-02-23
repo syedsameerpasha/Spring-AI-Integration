@@ -9,7 +9,7 @@ public interface ChatService {
 
 //    List<Tut> message(String query);
 
-    String chatTemplate(String query);
+    String chatTemplate(String query, String userId);
 
     Flux<String> streamChat(String query);
 }

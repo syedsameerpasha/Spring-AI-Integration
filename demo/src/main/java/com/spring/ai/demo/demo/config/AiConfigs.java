@@ -7,6 +7,8 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SafeGuardAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +20,14 @@ import java.util.List;
 public class AiConfigs {
 
     private Logger logger = LoggerFactory.getLogger(AiConfigs.class);
+
+    //IF U WANT YOUR CUSTOM MAX MESSAGES IN CHAT MEMORY, THEN U CAN CREATE YOUR OWN CHAT MEMORY IMPLEMENTATION AND RETURN ITS BEAN HERE, OTHERWISE DEFAULT CHAT MEMORY IMPLEMENTATION WILL BE USED WHICH HAS MAX 20 MESSAGES.
+
+    @Bean
+    public ChatMemory chatMemory(JdbcChatMemoryRepository jdbcChatMemoryRepository){
+        return MessageWindowChatMemory.builder().chatMemoryRepository(jdbcChatMemoryRepository).maxMessages(10).build();
+
+    }
 
 
     @Bean
