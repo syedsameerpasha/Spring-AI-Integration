@@ -48,11 +48,27 @@
 <!--			<artifactId>spring-ai-starter-model-ollama</artifactId>-->
 <!--		</dependency>-->
 
+		<!--RAG dependency-->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-advisors-vector-store</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-rag</artifactId>
+		</dependency>
+
+
 
 		 <!-- chat memory dependnecies-->
 		<dependency>
 			<groupId>org.springframework.ai</groupId>
 			<artifactId>spring-ai-starter-model-chat-memory-repository-jdbc</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-starter-vector-store-mariadb</artifactId>
 		</dependency>
 
 		<dependency>
