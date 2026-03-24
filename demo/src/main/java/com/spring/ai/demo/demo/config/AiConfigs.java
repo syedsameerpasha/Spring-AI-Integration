@@ -7,8 +7,9 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SafeGuardAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
-import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
+//import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.context.annotation.Bean;
@@ -22,11 +23,16 @@ public class AiConfigs {
     private Logger logger = LoggerFactory.getLogger(AiConfigs.class);
 
     //IF U WANT YOUR CUSTOM MAX MESSAGES IN CHAT MEMORY, THEN U CAN CREATE YOUR OWN CHAT MEMORY IMPLEMENTATION AND RETURN ITS BEAN HERE, OTHERWISE DEFAULT CHAT MEMORY IMPLEMENTATION WILL BE USED WHICH HAS MAX 20 MESSAGES.
-
+//
+//    @Bean
+//    public ChatMemory chatMemory(JdbcChatMemoryRepository jdbcChatMemoryRepository){
+//        return MessageWindowChatMemory.builder().chatMemoryRepository(jdbcChatMemoryRepository).maxMessages(10).build();
+//
+//    }
+    //in memory chat memory implementation, all the messages will be stored in the memory and it will be lost once the application is restarted, so it is not recommended for production use, but it is useful for testing and development purposes.
     @Bean
-    public ChatMemory chatMemory(JdbcChatMemoryRepository jdbcChatMemoryRepository){
-        return MessageWindowChatMemory.builder().chatMemoryRepository(jdbcChatMemoryRepository).maxMessages(10).build();
-
+    public ChatMemory chatMemory(InMemoryChatMemoryRepository inMemoryChatMemoryRepository){
+        return MessageWindowChatMemory.builder().chatMemoryRepository(inMemoryChatMemoryRepository).maxMessages(10).build();
     }
 
 
@@ -37,7 +43,7 @@ public class AiConfigs {
         MessageChatMemoryAdvisor messageChatMemoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
         return builder
                 .defaultAdvisors(messageChatMemoryAdvisor,new TokenCountAdvisor(),new SafeGuardAdvisor(List.of("games")))
-                .defaultSystem("You are a helpful coding assistant. You are an expert in coding.")
+//                .defaultSystem("You are a helpful coding assistant. You are an expert in coding.")
                 .defaultOptions(OpenAiChatOptions.builder()
                         .model("gpt-4o-mini")
                         .temperature(0.3)
