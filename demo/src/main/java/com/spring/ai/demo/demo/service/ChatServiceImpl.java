@@ -7,6 +7,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -101,12 +102,17 @@ public class ChatServiceImpl implements ChatService {
 ////
 ////
 ////        Prompt prompt = new Prompt(systemMessage,userMessage);
-//
+        // retreving data from vector store based on user query and then passing that data as context in system prompt to get more relevant answer from model.
+        SearchRequest searchRequest = SearchRequest.builder().topK(5).similarityThreshold(0.6).query(query).build();
+        List<Document> documentList = vectorStore.similaritySearch(searchRequest);
+        List<String> contextList = documentList.stream().map(Document::getText).toList();
+        String context = String.join(",", contextList);
+
         return this.chatClient
                 .prompt()
-                .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID,"userId"))
+//                .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID,"userId"))
                 .system(system ->
-                        system.text(systemMessage.toString())
+                        system.text(this.systemMessage).param("documentSections", context)
                 )
                 .user(user ->
                         user.text(userMessage.toString())
