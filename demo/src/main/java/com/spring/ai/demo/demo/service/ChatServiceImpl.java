@@ -2,6 +2,7 @@ package com.spring.ai.demo.demo.service;
 
 import com.spring.ai.demo.demo.Entity.Tut;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
@@ -103,17 +104,28 @@ public class ChatServiceImpl implements ChatService {
 ////
 ////        Prompt prompt = new Prompt(systemMessage,userMessage);
         // retreving data from vector store based on user query and then passing that data as context in system prompt to get more relevant answer from model.
-        SearchRequest searchRequest = SearchRequest.builder().topK(5).similarityThreshold(0.6).query(query).build();
-        List<Document> documentList = vectorStore.similaritySearch(searchRequest);
-        List<String> contextList = documentList.stream().map(Document::getText).toList();
-        String context = String.join(",", contextList);
+       //no need to ryt below code  u can use QA advisor for this, it will do all the below steps for u and also it will take care of prompt formatting as well as few shot examples if u want to provide, it also has option to provide chain of thought prompt to get better answer from model, it is recommended to use QA advisor instead of writing all the code below for retreving data from vector store and passing it as context in system prompt, but if u want to write ur own code then below code is an example of how to do it.
+//
+//        SearchRequest searchRequest = SearchRequest.builder().topK(5).similarityThreshold(0.6).query(query).build();
+//        List<Document> documentList = vectorStore.similaritySearch(searchRequest);
+//        List<String> contextList = documentList.stream().map(Document::getText).toList();
+//        String context = String.join(",", contextList);
 
         return this.chatClient
                 .prompt()
 //                .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID,"userId"))
-                .system(system ->
-                        system.text(this.systemMessage).param("documentSections", context)
-                )
+//                .system(system ->
+//                        system.text(this.systemMessage).param("documentSections", context)
+//                )
+                //use QA or if u want your custom code to retreive documents u can use searchRequest like below as well
+               // .advisors(QuestionAnswerAdvisor.builder(vectorStore).build())
+                .advisors(QuestionAnswerAdvisor.builder(vectorStore)
+                        .searchRequest(SearchRequest.builder()
+                                .topK(5)
+                                .similarityThreshold(0.6)
+                                .query(query)
+                                .build())
+                        .build())
                 .user(user ->
                         user.text(userMessage.toString())
                                 .param("concept", query)
